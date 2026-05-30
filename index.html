@@ -504,8 +504,6 @@
   resize(); initParticles(); drawParticles();
   window.addEventListener('resize', () => { resize(); initParticles(); });
 
-  const GHL_WEBHOOK = 'https://services.leadconnectorhq.com/hooks/crYlBaqVt0m5ax7I6F71/webhook-trigger/JBCePj5ZOlsgQs9EMLMr';
-  const SHEETS_WEBHOOK = 'https://script.google.com/macros/s/AKfycbx8O7SYhuHvKZmn7gSCI91KGGji5XTZ4_sZKWstOJVq5VKAhyEDDIY69plNHguMGxfv/exec';
   const REDIRECT_URL = 'https://portalsofawe.com/garymalkin-audiotracks/';
 
   document.getElementById('optinForm').addEventListener('submit', async function(e) {
@@ -525,21 +523,13 @@
     errorMsg.style.display = 'none';
 
     try {
-      // Fire both webhooks simultaneously
-      await Promise.allSettled([
-        fetch(GHL_WEBHOOK, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ firstName, lastName, email, phone, source: 'Year of Miracles Opt-In' }),
-          mode: 'no-cors'
-        }),
-        fetch(SHEETS_WEBHOOK, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ firstName, lastName, email, phone, source: 'Year of Miracles Opt-In' }),
-          mode: 'no-cors'
-        })
-      ]);
+      const res = await fetch('/api/submit', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ firstName, lastName, email, phone }),
+      });
+
+      if (!res.ok) throw new Error('Submit failed');
 
       form.style.display = 'none';
       successState.style.display = 'flex';
