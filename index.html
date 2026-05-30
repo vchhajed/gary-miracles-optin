@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>A Gift from Gary Malkin · Year of Miracles</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #1a0008;
+      --gold: #c9a84c;
+      --gold-light: #e8c97a;
+      --cream: #f5e6d0;
+      --cream-dim: rgba(245,230,208,0.72);
+      --serif: 'Cormorant Garamond', Georgia, serif;
+      --sans: 'Jost', sans-serif;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background-color: var(--bg);
+      color: var(--cream);
+      font-family: var(--sans);
+      font-weight: 300;
+      min-height: 100vh;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 80% 60% at 50% 0%, rgba(120,0,30,0.7) 0%, transparent 65%),
+        radial-gradient(ellipse 60% 50% at 50% 100%, rgba(80,0,20,0.5) 0%, transparent 60%),
+        radial-gradient(ellipse 40% 40% at 100% 50%, rgba(140,20,40,0.2) 0%, transparent 60%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    body::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      opacity: 0.35;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    #particles {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    .container {
+      position: relative;
+      z-index: 1;
+      max-width: 660px;
+      margin: 0 auto;
+      padding: 16px 32px 60px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+
+    .logo {
+      width: 220px;
+      margin-bottom: 8px;
+    }
+
+    .gift-hero {
+      margin-bottom: 8px;
+      position: relative;
+      width: 80px;
+      height: 80px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .gift-svg {
+      width: 62px;
+      height: 62px;
+      filter: drop-shadow(0 0 16px rgba(201,168,76,0.7)) drop-shadow(0 0 40px rgba(201,168,76,0.35));
+      animation: giftGlow 3s ease-in-out infinite;
+    }
+
+    @keyframes giftGlow {
+      0%, 100% { filter: drop-shadow(0 0 14px rgba(201,168,76,0.6)) drop-shadow(0 0 35px rgba(201,168,76,0.3)); }
+      50% { filter: drop-shadow(0 0 28px rgba(232,201,122,0.95)) drop-shadow(0 0 65px rgba(201,168,76,0.55)); }
+    }
+
+    .eyebrow-wrap { margin-bottom: 10px; }
+
+    .eyebrow {
+      display: inline-block;
+      font-family: var(--sans);
+      font-size: 14px;
+      font-weight: 500;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--gold);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .eyebrow-highlight {
+      display: block;
+      font-family: var(--serif);
+      font-size: 1.9rem;
+      font-weight: 400;
+      font-style: italic;
+      letter-spacing: 0.04em;
+      text-transform: none;
+      color: var(--gold-light);
+      margin-top: 6px;
+    }
+
+    .photo-wrap {
+      width: 260px;
+      height: 260px;
+      border-radius: 16px;
+      overflow: hidden;
+      margin-bottom: 20px;
+      border: 1px solid rgba(201,168,76,0.25);
+      box-shadow: 0 0 80px rgba(180,110,20,0.2), 0 20px 60px rgba(0,0,0,0.7);
+    }
+
+    .photo-wrap img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center top;
+    }
+
+    h1 {
+      font-family: var(--serif);
+      font-size: clamp(2.6rem, 6.5vw, 3.8rem);
+      font-weight: 300;
+      line-height: 1.15;
+      color: var(--cream);
+      margin-bottom: 10px;
+    }
+
+    h1 em { font-style: italic; color: var(--gold-light); }
+
+    .name {
+      font-family: var(--serif);
+      font-size: 1.45rem;
+      font-weight: 400;
+      color: var(--gold);
+      letter-spacing: 0.05em;
+      margin-bottom: 4px;
+    }
+
+    .title {
+      font-family: var(--sans);
+      font-size: 16px;
+      font-weight: 400;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--cream-dim);
+      margin-bottom: 16px;
+      line-height: 2;
+    }
+
+    .divider {
+      width: 60px;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--gold), transparent);
+      margin: 0 auto 16px;
+    }
+
+    .subhead {
+      font-family: var(--serif);
+      font-size: clamp(1.5rem, 4vw, 2rem);
+      font-weight: 300;
+      font-style: italic;
+      line-height: 1.7;
+      color: rgba(245,230,208,0.88);
+      max-width: 500px;
+      margin-bottom: 18px;
+    }
+
+    .track-teaser {
+      background: rgba(120,0,30,0.25);
+      border: 1px solid rgba(201,168,76,0.3);
+      border-radius: 12px;
+      padding: 24px 28px;
+      max-width: 500px;
+      width: 100%;
+      margin-bottom: 18px;
+    }
+
+    .track-teaser-label {
+      font-family: var(--sans);
+      font-size: 14px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 12px;
+    }
+
+    .track-teaser-text {
+      font-family: var(--serif);
+      font-size: 1.4rem;
+      font-style: italic;
+      font-weight: 300;
+      color: var(--cream-dim);
+      line-height: 1.7;
+      margin-bottom: 16px;
+    }
+
+    .track-names {
+      font-family: var(--sans);
+      font-size: 14px;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: rgba(201,168,76,0.85);
+      line-height: 2.2;
+    }
+
+    .form-wrap {
+      width: 100%;
+      max-width: 480px;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .form-field { display: flex; flex-direction: column; }
+    .form-field.full { grid-column: 1 / -1; }
+
+    input {
+      background: rgba(20,0,8,0.8);
+      border: 1.5px solid var(--gold);
+      border-radius: 8px;
+      padding: 18px 20px;
+      font-family: var(--sans);
+      font-size: 17px;
+      font-weight: 400;
+      color: #ffffff;
+      letter-spacing: 0.04em;
+      outline: none;
+      transition: border-color 0.3s, box-shadow 0.3s, background 0.3s;
+      width: 100%;
+    }
+
+    input::placeholder { color: rgba(201,168,76,0.45); font-weight: 300; }
+
+    input:focus {
+      border-color: var(--gold-light);
+      background: rgba(80,0,20,0.75);
+      box-shadow: 0 0 0 3px rgba(201,168,76,0.12), 0 0 25px rgba(201,168,76,0.12);
+    }
+
+    .btn {
+      width: 100%;
+      margin-top: 16px;
+      padding: 20px 32px;
+      background: linear-gradient(135deg, #b8912e, #e8c97a, #c9a84c, #e8c97a, #b8912e);
+      background-size: 300% 100%;
+      border: none;
+      border-radius: 8px;
+      font-family: var(--sans);
+      font-size: 15px;
+      font-weight: 500;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: #1a0008;
+      cursor: pointer;
+      animation: btnBreathe 3s ease-in-out infinite;
+      transition: transform 0.2s;
+    }
+
+    @keyframes btnBreathe {
+      0%, 100% { background-position: 0% 0%; box-shadow: 0 4px 25px rgba(201,168,76,0.3), 0 0 40px rgba(201,168,76,0.1); }
+      50% { background-position: 100% 0%; box-shadow: 0 6px 50px rgba(232,201,122,0.55), 0 0 80px rgba(201,168,76,0.28); }
+    }
+
+    .btn:hover { transform: translateY(-2px); }
+    .btn:active { transform: translateY(0); }
+    .btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; animation: none; }
+
+    .fine-print {
+      font-size: 15px;
+      color: var(--gold);
+      letter-spacing: 0.04em;
+      margin-top: 16px;
+      font-family: var(--serif);
+      font-style: italic;
+      line-height: 1.6;
+    }
+
+    .error-msg {
+      display: none;
+      background: rgba(200,60,60,0.1);
+      border: 1px solid rgba(200,60,60,0.3);
+      border-radius: 8px;
+      padding: 14px 18px;
+      font-size: 15px;
+      color: #f08080;
+      margin-top: 12px;
+      text-align: left;
+    }
+
+    .success-state {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+      padding: 48px 0;
+      opacity: 0;
+      transition: opacity 0.5s ease;
+    }
+
+    .success-state.visible { opacity: 1; }
+
+    .breath-dot {
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: var(--gold);
+      animation: breathe 2s ease-in-out infinite;
+    }
+
+    .success-beautiful {
+      font-family: var(--serif);
+      font-size: 2.8rem;
+      font-style: italic;
+      font-weight: 300;
+      color: var(--gold-light);
+    }
+
+    .success-sub {
+      font-family: var(--serif);
+      font-size: 1.5rem;
+      font-style: italic;
+      font-weight: 300;
+      color: var(--cream-dim);
+      line-height: 1.6;
+    }
+
+    .footer-line {
+      margin-top: 48px;
+      font-size: 12px;
+      letter-spacing: 0.12em;
+      color: rgba(245,230,208,0.25);
+      text-transform: uppercase;
+    }
+
+    @keyframes breathe {
+      0%, 100% { transform: scale(1); opacity: 0.6; }
+      50% { transform: scale(1.7); opacity: 1; box-shadow: 0 0 24px rgba(201,168,76,0.6); }
+    }
+
+    @media (max-width: 480px) {
+      .container { padding: 16px 20px 50px; }
+      .form-row { grid-template-columns: 1fr; }
+      .photo-wrap { width: 220px; height: 220px; }
+    }
+  </style>
+</head>
+<body>
+
+<canvas id="particles"></canvas>
+
+<div class="container">
+
+  <img class="logo" src="https://portalsofawe.com/wp-content/uploads/2025/09/GM-LOGO-TRANSPARENT.png" alt="Gary Malkin" />
+
+  <div class="gift-hero">
+    <svg class="gift-svg" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect x="8" y="28" width="48" height="32" rx="3" fill="rgba(201,168,76,0.12)" stroke="#c9a84c" stroke-width="1.5"/>
+      <rect x="4" y="20" width="56" height="10" rx="2" fill="rgba(201,168,76,0.18)" stroke="#c9a84c" stroke-width="1.5"/>
+      <line x1="32" y1="20" x2="32" y2="60" stroke="#e8c97a" stroke-width="1.5"/>
+      <line x1="4" y1="25" x2="60" y2="25" stroke="#e8c97a" stroke-width="0.75" stroke-dasharray="3 3"/>
+      <path d="M32 20 C28 14 20 12 22 8 C24 4 32 8 32 20Z" fill="rgba(232,201,122,0.25)" stroke="#e8c97a" stroke-width="1.2"/>
+      <path d="M32 20 C36 14 44 12 42 8 C40 4 32 8 32 20Z" fill="rgba(232,201,122,0.25)" stroke="#e8c97a" stroke-width="1.2"/>
+    </svg>
+  </div>
+
+  <div class="eyebrow-wrap">
+    <span class="eyebrow">A special gift for the<span class="eyebrow-highlight">Year of Miracles Community</span></span>
+  </div>
+
+  <div class="photo-wrap">
+    <img src="https://portalsofawe.com/wp-content/uploads/2025/09/GM-COLOR-NOT-CROPPED-copy.jpg" alt="Gary Malkin" />
+  </div>
+
+  <h1>A Gift of Sound.<br/><em>An Invitation to Remember.</em></h1>
+
+  <p class="name">Gary Malkin</p>
+  <p class="title">Emmy Award-Winning Composer<br/>Emotional Authenticity Activator</p>
+
+  <div class="divider"></div>
+
+  <p class="subhead">
+    I have set aside a personal audio gift for you.<br/>
+    Enter your name below to receive it<br/>
+    and let the music find you.
+  </p>
+
+  <div class="track-teaser">
+    <p class="track-teaser-label">✦ &nbsp; What awaits you &nbsp; ✦</p>
+    <p class="track-teaser-text">
+      Exclusive audio experiences featuring some of the world's most beloved voices in wisdom, healing, and transformation — set to soul-stirring music.
+    </p>
+    <p class="track-names">
+      Deepak Chopra &nbsp;·&nbsp; Marianne Williamson<br/>
+      Thich Nhat Hanh &nbsp;·&nbsp; Bob Proctor<br/>
+      Brother David Steindl-Rast<br/>
+      and more
+    </p>
+  </div>
+
+  <div class="form-wrap">
+    <form id="optinForm">
+      <div class="form-row">
+        <div class="form-field">
+          <input type="text" id="firstName" placeholder="First Name" required />
+        </div>
+        <div class="form-field">
+          <input type="text" id="lastName" placeholder="Last Name" required />
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-field full">
+          <input type="email" id="email" placeholder="Email Address" required />
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-field full">
+          <input type="tel" id="phone" placeholder="Phone Number (optional)" />
+        </div>
+      </div>
+      <button class="btn" type="submit" id="submitBtn">Send Me My Gift</button>
+      <div class="error-msg" id="errorMsg">
+        Something didn't quite land. Please check your details and try again — we want to make sure your gift reaches you.
+      </div>
+    </form>
+
+    <div class="success-state" id="successState">
+      <div class="breath-dot"></div>
+      <p class="success-beautiful">Beautiful.</p>
+      <p class="success-sub">Taking you to your listening journey now…</p>
+    </div>
+
+    <p class="fine-print">You'll receive your audio gift within moments and stay updated on our New Portals of Awe Community Launch!</p>
+  </div>
+
+  <p class="footer-line">© Gary Malkin · Portals of Awe</p>
+
+</div>
+
+<script>
+  const canvas = document.getElementById('particles');
+  const ctx = canvas.getContext('2d');
+  let W, H, particles;
+
+  function resize() { W = canvas.width = window.innerWidth; H = canvas.height = window.innerHeight; }
+
+  function initParticles() {
+    particles = Array.from({ length: 140 }, () => ({
+      x: Math.random() * W, y: Math.random() * H,
+      r: Math.random() * 1.8 + 0.4,
+      speed: (Math.random() * 0.35 + 0.1) * 1.56,
+      opacity: Math.random() * 0.4 + 0.1,
+      drift: (Math.random() - 0.5) * 0.3,
+      opacityDir: Math.random() > 0.5 ? 1 : -1,
+    }));
+  }
+
+  function drawParticles() {
+    ctx.clearRect(0, 0, W, H);
+    particles.forEach(p => {
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(201,168,76,${p.opacity})`;
+      ctx.fill();
+      p.y -= p.speed; p.x += p.drift;
+      p.opacity += p.opacityDir * 0.003;
+      if (p.opacity > 0.5) p.opacityDir = -1;
+      if (p.opacity < 0.05) p.opacityDir = 1;
+      if (p.y < -10) { p.y = H + 10; p.x = Math.random() * W; }
+      if (p.x < -10 || p.x > W + 10) p.x = Math.random() * W;
+    });
+    requestAnimationFrame(drawParticles);
+  }
+
+  resize(); initParticles(); drawParticles();
+  window.addEventListener('resize', () => { resize(); initParticles(); });
+
+  const GHL_WEBHOOK = 'https://services.leadconnectorhq.com/hooks/crYlBaqVt0m5ax7I6F71/webhook-trigger/JBCePj5ZOlsgQs9EMLMr';
+  const SHEETS_WEBHOOK = 'https://script.google.com/macros/s/AKfycbx8O7SYhuHvKZmn7gSCI91KGGji5XTZ4_sZKWstOJVq5VKAhyEDDIY69plNHguMGxfv/exec';
+  const REDIRECT_URL = 'https://portalsofawe.com/garymalkin-audiotracks/';
+
+  document.getElementById('optinForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    const btn = document.getElementById('submitBtn');
+    const errorMsg = document.getElementById('errorMsg');
+    const form = document.getElementById('optinForm');
+    const successState = document.getElementById('successState');
+
+    const firstName = document.getElementById('firstName').value.trim();
+    const lastName = document.getElementById('lastName').value.trim();
+    const email = document.getElementById('email').value.trim();
+    const phone = document.getElementById('phone').value.trim();
+
+    btn.disabled = true;
+    btn.textContent = 'Sending with care…';
+    errorMsg.style.display = 'none';
+
+    try {
+      // Fire both webhooks simultaneously
+      await Promise.allSettled([
+        fetch(GHL_WEBHOOK, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ firstName, lastName, email, phone, source: 'Year of Miracles Opt-In' }),
+          mode: 'no-cors'
+        }),
+        fetch(SHEETS_WEBHOOK, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ firstName, lastName, email, phone, source: 'Year of Miracles Opt-In' }),
+          mode: 'no-cors'
+        })
+      ]);
+
+      form.style.display = 'none';
+      successState.style.display = 'flex';
+      setTimeout(() => successState.classList.add('visible'), 50);
+      setTimeout(() => { window.location.href = REDIRECT_URL; }, 800);
+
+    } catch (err) {
+      btn.disabled = false;
+      btn.textContent = 'Send Me My Gift';
+      errorMsg.style.display = 'block';
+    }
+  });
+</script>
+</body>
+</html>
