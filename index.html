@@ -505,6 +505,7 @@
   window.addEventListener('resize', () => { resize(); initParticles(); });
 
   const REDIRECT_URL = 'https://portalsofawe.com/garymalkin-audiotracks/';
+  const API_URL = 'https://gary-miracles-submit.REPLACE-WITH-YOUR-SUBDOMAIN.workers.dev';
 
   document.getElementById('optinForm').addEventListener('submit', async function(e) {
     e.preventDefault();
@@ -523,7 +524,7 @@
     errorMsg.style.display = 'none';
 
     try {
-      const res = await fetch('/api/submit', {
+      const res = await fetch(API_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ firstName, lastName, email, phone }),
