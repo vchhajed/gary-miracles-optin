@@ -529,7 +529,11 @@
         body: JSON.stringify({ firstName, lastName, email, phone }),
       });
 
-      if (!res.ok) throw new Error('Submit failed');
+      if (!res.ok) {
+        const text = await res.text();
+        console.error('[optin] Server responded with status', res.status, text);
+        throw new Error('Submit failed: HTTP ' + res.status);
+      }
 
       form.style.display = 'none';
       successState.style.display = 'flex';
@@ -537,8 +541,10 @@
       setTimeout(() => { window.location.href = REDIRECT_URL; }, 800);
 
     } catch (err) {
+      console.error('[optin] Submit error:', err);
       btn.disabled = false;
       btn.textContent = 'Send Me My Gift';
+      errorMsg.textContent = 'Something didn\'t quite land. Please check your details and try again — we want to make sure your gift reaches you.';
       errorMsg.style.display = 'block';
     }
   });
