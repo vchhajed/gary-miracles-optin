@@ -295,6 +295,14 @@
     .btn:active { transform: translateY(0); }
     .btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; animation: none; }
 
+    a.btn {
+      display: inline-block;
+      width: auto;
+      padding: 18px 40px;
+      text-decoration: none;
+      text-align: center;
+    }
+
     .fine-print {
       font-size: 15px;
       color: var(--gold);
@@ -394,7 +402,7 @@
   </div>
 
   <div class="eyebrow-wrap">
-    <span class="eyebrow">A special gift for the<span class="eyebrow-highlight">Year of Miracles Community</span></span>
+    <span class="eyebrow">A special gift for<span class="eyebrow-highlight">you.</span></span>
   </div>
 
   <div class="photo-wrap">
@@ -404,7 +412,7 @@
   <h1>A Gift of Sound.<br/><em>An Invitation to Remember.</em></h1>
 
   <p class="name">Gary Malkin</p>
-  <p class="title">Emmy Award-Winning Composer<br/>Emotional Authenticity Activator</p>
+  <p class="title">Award-Winning Composer<br/>Emotional Authenticity Activator</p>
 
   <div class="divider"></div>
 
@@ -455,11 +463,16 @@
 
     <div class="success-state" id="successState">
       <div class="breath-dot"></div>
-      <p class="success-beautiful">Beautiful.</p>
-      <p class="success-sub">Taking you to your listening journey now…</p>
+      <p class="success-beautiful">Thank you.</p>
+      <p class="success-sub">
+        Thank you for being part of the community.<br/>
+        Your special gift is on its way to your inbox —<br/>
+        or you can open it right now below.
+      </p>
+      <a class="btn" id="giftLink" href="https://garymalkin.com/gifts/">View Your Gift</a>
     </div>
 
-    <p class="fine-print">You'll receive your audio gift within moments and stay updated on our New Portals of Awe Community Launch!</p>
+    <p class="fine-print" id="finePrint">You'll receive your audio gift within moments and stay updated on our New Portals of Awe Community Launch!</p>
   </div>
 
   <p class="footer-line">© Gary Malkin · Portals of Awe</p>
@@ -504,7 +517,7 @@
   resize(); initParticles(); drawParticles();
   window.addEventListener('resize', () => { resize(); initParticles(); });
 
-  const REDIRECT_URL = 'https://portalsofawe.com/garymalkin-audiotracks/';
+  const GIFT_URL = 'https://garymalkin.com/gifts/';
   const API_URL = 'https://square-frog-3b99.harshoswal711.workers.dev';
 
   document.getElementById('optinForm').addEventListener('submit', async function(e) {
@@ -513,6 +526,8 @@
     const errorMsg = document.getElementById('errorMsg');
     const form = document.getElementById('optinForm');
     const successState = document.getElementById('successState');
+    const finePrint = document.getElementById('finePrint');
+    const giftLink = document.getElementById('giftLink');
 
     const firstName = document.getElementById('firstName').value.trim();
     const lastName = document.getElementById('lastName').value.trim();
@@ -536,10 +551,17 @@
         throw new Error('Submit failed: HTTP ' + res.status);
       }
 
+      let giftUrl = GIFT_URL;
+      try {
+        const data = await res.json();
+        if (data && data.giftUrl) giftUrl = data.giftUrl;
+      } catch (_) { /* keep default */ }
+      giftLink.href = giftUrl;
+
       form.style.display = 'none';
+      if (finePrint) finePrint.style.display = 'none';
       successState.style.display = 'flex';
       setTimeout(() => successState.classList.add('visible'), 50);
-      setTimeout(() => { window.location.href = REDIRECT_URL; }, 800);
 
     } catch (err) {
       console.error('[optin] Submit error:', err);

@@ -8,6 +8,10 @@ const RATE_WINDOW_MS = 60000;
 const GHL_WEBHOOK = 'https://services.leadconnectorhq.com/hooks/crYlBaqVt0m5ax7I6F71/webhook-trigger/JBCePj5ZOlsgQs9EMLMr';
 const SHEETS_WEBHOOK = 'https://script.google.com/macros/s/AKfycbx8O7SYhuHvKZmn7gSCI91KGGji5XTZ4_sZKWstOJVq5VKAhyEDDIY69plNHguMGxfv/exec';
 
+// Where the form filler is sent to view their gift. Passed through to GoHighLevel
+// so the thank-you email template can link to it, and returned to the page.
+const GIFT_URL = 'https://garymalkin.com/gifts/';
+
 const rateMap = new Map();
 
 function pruneTimestamps(ts) {
@@ -116,9 +120,17 @@ export default {
     const payload = {
       firstName,
       lastName,
+      // Full name convenience field for CRMs that expect a single "name".
+      name: [firstName, lastName].filter(Boolean).join(' '),
       email,
       phone,
       source: 'Year of Miracles Opt-In',
+      // Tags let the GHL workflow segment these contacts and drop them into the
+      // right pipeline stage. Adjust the tag names to match the GHL setup.
+      tags: ['year-of-miracles-optin', 'gift-requested'],
+      // Passed through so the GHL thank-you email template can reference it.
+      giftUrl: GIFT_URL,
+      submittedAt: new Date().toISOString(),
     };
 
     const results = await Promise.allSettled([
@@ -143,6 +155,6 @@ export default {
       }
     });
 
-    return json({ ok: true }, 200);
+    return json({ ok: true, giftUrl: GIFT_URL }, 200);
   },
 };
