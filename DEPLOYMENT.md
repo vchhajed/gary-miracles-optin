@@ -1,6 +1,6 @@
 # Vercel gift email setup
 
-Status (2026-09-11): Deployed on Vercel. The opt-in form is served at both `/` and `/gifts/`. Resend is verified and sending correctly in production. Gift destination (the "View Your Gift" button after opt-in): https://portalsofawe.com/garymalkin-audiotracks/. Google Sheets timed out during an earlier test and still needs follow-up.
+Status (2026-09-11): Deployed on Vercel. The opt-in form is served at `/gifts/`. The site root `/` 307-redirects to https://portalsofawe.com/GaryMalkin/. Resend is verified and sending correctly in production. Gift destination (the "View Your Gift" button after opt-in): https://portalsofawe.com/garymalkin-audiotracks/. Google Sheets timed out during an earlier test and still needs follow-up.
 
 ## DNS
 
@@ -47,13 +47,13 @@ Sending enabled, receiving disabled. Existing DMARC was preserved.
 
 Project: gary-miracles-optin, scope vaibhavs-projects-a2cb3ce8. Node 24. The production RESEND_API_KEY is stored as a sensitive Vercel environment variable. Never commit credentials or environment files.
 
-The frontend posts to /api/submit. api/submit.js adapts the worker handler to a Vercel Function. `npm run build` copies index.html to public/index.html and public/gifts/index.html, so the form is served at both `/` and `/gifts/`; server code is not published as static content. There is no `/gifts` redirect. Cloudflare deployment is no longer needed for this implementation.
+The frontend posts to /api/submit. api/submit.js adapts the worker handler to a Vercel Function. `npm run build` copies index.html to public/index.html and public/gifts/index.html; server code is not published as static content. vercel.json 307-redirects `/` to https://portalsofawe.com/GaryMalkin/, so the form is reached at `/gifts/` (the root static file is a harmless fallback if that redirect is ever removed). Cloudflare deployment is no longer needed for this implementation.
 
 Vercel domains: garymalkin.com is primary (production), www.garymalkin.com 307-redirects to it.
 
 1. Run npm test and npm run build.
 2. Deploy: push to main (auto-deploys via the GitHub integration) or npx vercel deploy --prod --yes.
-3. Load https://garymalkin.com/gifts/ and confirm the opt-in form renders.
+3. Load https://garymalkin.com/gifts/ and confirm the opt-in form renders; confirm https://garymalkin.com/ redirects to https://portalsofawe.com/GaryMalkin/.
 4. Submit a test form and confirm emailOk true, Sheets storage, and Resend delivery. API acceptance does not prove inbox placement.
 5. Keep the GitHub production branch aligned with the deployed source.
 

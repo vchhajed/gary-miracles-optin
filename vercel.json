@@ -5,5 +5,12 @@
     "api/submit.js": {
       "maxDuration": 30
     }
-  }
+  },
+  "redirects": [
+    {
+      "source": "/",
+      "destination": "https://portalsofawe.com/GaryMalkin/",
+      "permanent": false
+    }
+  ]
 }
