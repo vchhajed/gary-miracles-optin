@@ -464,12 +464,12 @@
     <div class="success-state" id="successState">
       <div class="breath-dot"></div>
       <p class="success-beautiful">Thank you.</p>
-      <p class="success-sub">
+      <p class="success-sub" id="successMessage" role="status">
         Thank you for being part of the community.<br/>
         Your special gift is on its way to your inbox —<br/>
         or you can open it right now below.
       </p>
-      <a class="btn" id="giftLink" href="https://garymalkin.com/gifts/">View Your Gift</a>
+      <a class="btn" id="giftLink" href="https://portalsofawe.com/garymalkin-audiotracks/">View Your Gift</a>
     </div>
 
     <p class="fine-print" id="finePrint">You'll receive your audio gift within moments and stay updated on our New Portals of Awe Community Launch!</p>
@@ -517,8 +517,8 @@
   resize(); initParticles(); drawParticles();
   window.addEventListener('resize', () => { resize(); initParticles(); });
 
-  const GIFT_URL = 'https://garymalkin.com/gifts/';
-  const API_URL = 'https://square-frog-3b99.harshoswal711.workers.dev';
+  const GIFT_URL = 'https://portalsofawe.com/garymalkin-audiotracks/';
+  const API_URL = '/api/submit';
 
   document.getElementById('optinForm').addEventListener('submit', async function(e) {
     e.preventDefault();
@@ -552,11 +552,16 @@
       }
 
       let giftUrl = GIFT_URL;
+      let emailOk = false;
       try {
         const data = await res.json();
         if (data && data.giftUrl) giftUrl = data.giftUrl;
+        emailOk = data && data.emailOk === true;
       } catch (_) { /* keep default */ }
       giftLink.href = giftUrl;
+      document.getElementById('successMessage').textContent = emailOk
+        ? 'Thank you for being here. Your gift email is on its way — or you can open your gift right now below.'
+        : 'Your gift is ready to open below. We could not confirm your gift email was sent, so please save this link to enjoy it again.';
 
       form.style.display = 'none';
       if (finePrint) finePrint.style.display = 'none';

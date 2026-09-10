@@ -1,0 +1,6 @@
+{
+  "private": true,
+  "type": "module",
+  "engines": { "node": "24.x" },
+  "scripts": { "test": "node --test email-flow.test.mjs", "build": "mkdir -p public && cp index.html public/index.html" }
+}

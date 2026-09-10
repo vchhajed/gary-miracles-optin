@@ -4,13 +4,14 @@ const MAX_NAME_LENGTH = 200;
 const MAX_EMAIL_LENGTH = 320;
 const MAX_PHONE_LENGTH = 30;
 const RATE_WINDOW_MS = 60000;
+const UPSTREAM_TIMEOUT_MS = 10000;
 
 const GHL_WEBHOOK = 'https://services.leadconnectorhq.com/hooks/crYlBaqVt0m5ax7I6F71/webhook-trigger/JBCePj5ZOlsgQs9EMLMr';
 const SHEETS_WEBHOOK = 'https://script.google.com/macros/s/AKfycbx8O7SYhuHvKZmn7gSCI91KGGji5XTZ4_sZKWstOJVq5VKAhyEDDIY69plNHguMGxfv/exec';
 
 // Where the form filler is sent to view their gift. Passed through to GoHighLevel
 // so the thank-you email template can link to it, and returned to the page.
-const GIFT_URL = 'https://garymalkin.com/gifts/';
+const GIFT_URL = 'https://portalsofawe.com/garymalkin-audiotracks/';
 
 // Transactional gift email via Resend. RESEND_API_KEY is a Worker secret
 // (wrangler secret put RESEND_API_KEY). EMAIL_FROM must be an address on a
@@ -123,6 +124,7 @@ async function sendGiftEmail(env, firstName, email) {
   }
   const res = await fetch(RESEND_ENDPOINT, {
     method: 'POST',
+    signal: AbortSignal.timeout(UPSTREAM_TIMEOUT_MS),
     headers: {
       'Content-Type': 'application/json',
       Authorization: `Bearer ${env.RESEND_API_KEY}`,
@@ -136,8 +138,7 @@ async function sendGiftEmail(env, firstName, email) {
     }),
   });
   if (!res.ok) {
-    const detail = await res.text();
-    throw new Error(`Resend HTTP ${res.status}: ${detail}`);
+    throw new Error(`Resend HTTP ${res.status}`);
   }
   return res;
 }
@@ -221,11 +222,13 @@ export default {
     const results = await Promise.allSettled([
       fetch(GHL_WEBHOOK, {
         method: 'POST',
+        signal: AbortSignal.timeout(UPSTREAM_TIMEOUT_MS),
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
       }),
       fetch(SHEETS_WEBHOOK, {
         method: 'POST',
+        signal: AbortSignal.timeout(UPSTREAM_TIMEOUT_MS),
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
       }),
@@ -235,13 +238,16 @@ export default {
     const labels = ['GHL', 'Sheets', 'Email'];
     results.forEach((r, i) => {
       if (r.status === 'fulfilled') {
-        console.log(`[submit] ${labels[i]} status=${r.value.status}`);
+        const log = r.value.ok ? console.log : console.error;
+        log(`[submit] ${labels[i]} status=${r.value.status}`);
       } else {
         console.error(`[submit] ${labels[i]} failed: ${r.reason}`);
       }
     });
 
     const emailOk = results[2].status === 'fulfilled';
-    return json({ ok: true, emailOk, giftUrl: GIFT_URL }, 200);
+    const leadSaved = results.slice(0, 2).some(r => r.status === 'fulfilled' && r.value.ok);
+    // Gift access remains available even when an integration is unavailable.
+    return json({ ok: true, emailOk, leadSaved, giftUrl: GIFT_URL }, 200);
   },
 };
