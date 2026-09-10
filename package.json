@@ -2,5 +2,5 @@
   "private": true,
   "type": "module",
   "engines": { "node": "24.x" },
-  "scripts": { "test": "node --test email-flow.test.mjs", "build": "mkdir -p public && cp index.html public/index.html" }
+  "scripts": { "test": "node --test email-flow.test.mjs", "build": "mkdir -p public/gifts && cp index.html public/index.html && cp index.html public/gifts/index.html" }
 }

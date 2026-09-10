@@ -8,14 +8,9 @@
   },
   "redirects": [
     {
-      "source": "/gifts",
-      "destination": "https://portalsofawe.com/garymalkin-audiotracks/",
-      "permanent": true
-    },
-    {
-      "source": "/gifts/",
-      "destination": "https://portalsofawe.com/garymalkin-audiotracks/",
-      "permanent": true
+      "source": "/",
+      "destination": "https://portalsofawe.com/GaryMalkin/",
+      "permanent": false
     }
   ]
 }
