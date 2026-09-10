@@ -12,6 +12,13 @@ const SHEETS_WEBHOOK = 'https://script.google.com/macros/s/AKfycbx8O7SYhuHvKZmn7
 // so the thank-you email template can link to it, and returned to the page.
 const GIFT_URL = 'https://garymalkin.com/gifts/';
 
+// Transactional gift email via Resend. RESEND_API_KEY is a Worker secret
+// (wrangler secret put RESEND_API_KEY). EMAIL_FROM must be an address on a
+// domain verified in the Resend dashboard.
+const RESEND_ENDPOINT = 'https://api.resend.com/emails';
+const EMAIL_FROM = 'Gary Malkin <gift@garymalkin.com>';
+const EMAIL_SUBJECT = 'Your Gift of Sound has arrived';
+
 const rateMap = new Map();
 
 function pruneTimestamps(ts) {
@@ -43,6 +50,14 @@ function sanitize(str, maxLen) {
   return stripHtml(str).trim().slice(0, maxLen);
 }
 
+function escapeHtml(str) {
+  return str
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+}
+
 function isValidEmail(str) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(str);
 }
@@ -57,8 +72,78 @@ function json(data, status) {
   });
 }
 
+function giftEmailText(firstName) {
+  const name = firstName || 'friend';
+  return `Dear ${name},
+
+Thank you for being here. Your personal audio gift is ready — open it whenever you have a quiet moment to listen:
+
+${GIFT_URL}
+
+Featuring some of the world's most beloved voices in wisdom, healing, and transformation — set to soul-stirring music.
+
+With warmth,
+Gary Malkin
+Portals of Awe`;
+}
+
+function giftEmailHtml(firstName) {
+  const name = escapeHtml(firstName || 'friend');
+  return `<!DOCTYPE html>
+<html>
+  <body style="margin:0;padding:0;background:#f4f1ea;font-family:Georgia,'Times New Roman',serif;color:#2b2b2b;">
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f4f1ea;padding:32px 0;">
+      <tr>
+        <td align="center">
+          <table role="presentation" width="480" cellpadding="0" cellspacing="0" style="max-width:480px;background:#ffffff;border:1px solid #e3dcc9;border-radius:6px;padding:40px 36px;">
+            <tr><td align="center" style="font-size:13px;letter-spacing:2px;text-transform:uppercase;color:#c9a84c;padding-bottom:20px;">A Gift of Sound</td></tr>
+            <tr><td style="font-size:17px;line-height:1.6;">
+              <p style="margin:0 0 16px;">Dear ${name},</p>
+              <p style="margin:0 0 16px;">Thank you for being here. Your personal audio gift is ready &mdash; open it whenever you have a quiet moment to listen.</p>
+            </td></tr>
+            <tr><td align="center" style="padding:12px 0 24px;">
+              <a href="${GIFT_URL}" style="display:inline-block;background:#c9a84c;color:#ffffff;text-decoration:none;font-size:15px;letter-spacing:1px;padding:14px 32px;border-radius:4px;">Open Your Gift</a>
+            </td></tr>
+            <tr><td style="font-size:15px;line-height:1.6;color:#555555;">
+              <p style="margin:0 0 16px;">Featuring some of the world's most beloved voices in wisdom, healing, and transformation &mdash; set to soul-stirring music.</p>
+              <p style="margin:0;">With warmth,<br/>Gary Malkin<br/><span style="color:#999999;">Portals of Awe</span></p>
+            </td></tr>
+            <tr><td style="padding-top:24px;font-size:12px;color:#aaaaaa;">If the button doesn't work, paste this link into your browser:<br/>${GIFT_URL}</td></tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+  </body>
+</html>`;
+}
+
+async function sendGiftEmail(env, firstName, email) {
+  if (!env || !env.RESEND_API_KEY) {
+    throw new Error('RESEND_API_KEY not configured');
+  }
+  const res = await fetch(RESEND_ENDPOINT, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${env.RESEND_API_KEY}`,
+    },
+    body: JSON.stringify({
+      from: EMAIL_FROM,
+      to: [email],
+      subject: EMAIL_SUBJECT,
+      html: giftEmailHtml(firstName),
+      text: giftEmailText(firstName),
+    }),
+  });
+  if (!res.ok) {
+    const detail = await res.text();
+    throw new Error(`Resend HTTP ${res.status}: ${detail}`);
+  }
+  return res;
+}
+
 export default {
-  async fetch(request) {
+  async fetch(request, env) {
     const origin = request.headers.get('Origin') || '';
 
     if (request.method === 'OPTIONS') {
@@ -144,17 +229,19 @@ export default {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
       }),
+      sendGiftEmail(env, firstName, email),
     ]);
 
+    const labels = ['GHL', 'Sheets', 'Email'];
     results.forEach((r, i) => {
-      const target = i === 0 ? 'GHL' : 'Sheets';
       if (r.status === 'fulfilled') {
-        console.log(`[submit] ${target} status=${r.value.status}`);
+        console.log(`[submit] ${labels[i]} status=${r.value.status}`);
       } else {
-        console.error(`[submit] ${target} failed: ${r.reason}`);
+        console.error(`[submit] ${labels[i]} failed: ${r.reason}`);
       }
     });
 
-    return json({ ok: true, giftUrl: GIFT_URL }, 200);
+    const emailOk = results[2].status === 'fulfilled';
+    return json({ ok: true, emailOk, giftUrl: GIFT_URL }, 200);
   },
 };
